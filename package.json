@@ -9,6 +9,7 @@
     "test": "true"
   },
   "dependencies": {
+    "firebase": "^4.12.1",
     "vue": "2.5.16"
   },
   "devDependencies": {
@@ -35,7 +36,8 @@
       "eslint:recommended"
     ],
     "globals": {
-      "process": false
+      "process": false,
+      "Vue": false
     }
   },
   "postcss": {
