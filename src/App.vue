@@ -5,10 +5,12 @@ v-app
       v-alert(outline color="info" icon="info" :value="true") Грузим вопросы...
     v-layout(v-else justify-center)
       v-flex(xs12 sm6 lg5)
-        h1(class="head__title") Vue FAQ
+        h1(class="head__title") Vue FAQ 
+        a(href="https://vuejs.org/v2/guide/" title="vue doc" class="pray") 🙏🏻 Вот по этой ссылке ваша библия и коран! молитесь на нее днем и ночью, утром и вечером, в радости и печали, в здравии и нездравии.. всегда в общем!
+          
         v-text-field(
           v-model="query"
-          label="Поиск"
+          label="Поиск тупых вопросов"
           prepend-icon="search"
           class="search")
         v-card(class="question" v-for="(q, i) in questionsC" :key="i")
@@ -46,6 +48,10 @@ export default {
 
 <style scoped lang="stylus">
 vue = #40B181
+
+a
+  text-decoration none
+
 #app
   font-family 'open sans', 'roboto', 'helvetica'
 .head__title
@@ -66,5 +72,13 @@ vue = #40B181
   .cq
     font-weight 600
     font-size 20px
-    
+
+.pray
+  font-size 14px
+  color #b0bec5
+  margin-bottom .5rem
+  &:hover
+    color vue
+    text-shadow 0 1px vue
+    background-color transparent
 </style>
