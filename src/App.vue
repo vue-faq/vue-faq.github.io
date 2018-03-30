@@ -4,18 +4,16 @@ v-app
     v-layout(v-if="!Object.keys(questions).length")
       v-alert(outline color="info" icon="info" :value="true") Грузим вопросы...
     v-layout(v-else justify-center)
-      v-flex(xs12 sm6 lg5 class="text-xs-center")
+      v-flex(xs12 sm6 lg5)
         h1(class="head__title") Vue FAQ
         v-text-field(
           v-model="query"
           label="Поиск"
-          flat
-          solo-inverted
           prepend-icon="search"
           class="search")
         v-card(class="question" v-for="(q, i) in questionsC" :key="i")
-          v-card-text(v-html="q.question")
-          v-card-text(v-html="q.answer")
+          span(v-html="q.question" class="cq")
+          span(v-html="q.answer" class="ca")
 </template>
 
 <script>
@@ -52,12 +50,21 @@ vue = #40B181
   font-family 'open sans', 'roboto', 'helvetica'
 .head__title
   color vue
+  text-align center
+  font-size 40px
 .question
   margin 1rem 0
-  transition .4s linear
+  transition .3s linear
   font-size 1.2rem
+  padding 1rem
+  display flex
+  flex-flow column
   &:hover
     box-shadow 1px 1px 6px 1px vue
     transform scale(1.02)
     cursor pointer
+  .cq
+    font-weight 600
+    font-size 20px
+    
 </style>
