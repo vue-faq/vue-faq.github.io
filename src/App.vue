@@ -6,6 +6,9 @@ v-app
     v-layout(v-else justify-center)
       v-flex(xs12 sm6 lg5)
         h1(class="head__title") Vue FAQ 
+        v-layout(justify-center)
+          v-flex(xs6 lg3 class="text-xs-center")
+            v-select(label="Количество ответов на странице" v-model="perPage" :items="[5, 10, 25, 50, 100]")
         a(href="https://vuejs.org/v2/guide/" title="vue doc" class="pray") 🙏🏻 Вот по этой ссылке ваша библия и коран! молитесь на нее днем и ночью, утром и вечером, в радости и печали, в здравии и нездравии.. всегда в общем!
           
         v-text-field(
@@ -13,9 +16,13 @@ v-app
           label="Поиск тупых вопросов"
           prepend-icon="search"
           class="search")
-        v-card(class="question" v-for="(q, i) in questionsC" :key="i")
+        v-card(class="question" v-for="(q, i) in paginated" :key="i")
           span(v-html="q.question" class="cq")
           span(v-html="q.answer" class="ca")
+        
+        v-layout
+          v-flex(xs10 class="text-xs-center")
+            v-pagination(v-model="page" :length="paginationLength")
 </template>
 
 <script>
@@ -27,6 +34,8 @@ export default {
     return {
       questions: {},
       query: '',
+      page: 1,
+      perPage: 10,
     };
   },
   async created() {
@@ -35,12 +44,22 @@ export default {
     qs.forEach(q => Vue.set(this.questions, q.id, { ...q.data(), id: q.id }));
   },
   computed: {
+    questionsArray() {
+      return toArray(this.questions);
+    },
     questionsC() {
-      const arr = toArray(this.questions);
       if (this.query.length > 0) {
-        return arr.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()));
+        return this.questionsArray.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()));
       }
       return this.questions;
+    },
+    paginated() {
+      return this.questionsArray
+        .slice()
+        .splice(this.page, this.perPage);
+    },
+    paginationLength() {
+      return Math.ceil(this.questionsArray.length / this.perPage);
     },
   },
 };
