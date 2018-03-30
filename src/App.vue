@@ -1,7 +1,8 @@
 <template lang="pug">
 .app
   h1 Vue FAQ
-  template(v-for="q in questions")
+  input(class="search" placeholder="Поиск" v-model="search")
+  template(v-for="q in questionsC")
     .block
       span(v-html="q.question" class="title")
       br
@@ -10,22 +11,32 @@
 </template>
 
 <script>
-import {db} from './fb'
+import { db } from './fb';
+import toArray from 'lodash/toArray';
 
 export default {
   async created() {
-    const qc = db.collection('questions')
-    const qs = await qc.get()
-    qs.forEach(q =>
-      Vue.set(this.questions, q.id, {...q.data(), id: q.id})
-    )
+    const qc = db.collection('questions');
+    const qs = await qc.get();
+    qs.forEach(q => Vue.set(this.questions, q.id, { ...q.data(), id: q.id }));
   },
-  data() { return {
-    questions: {},
-  }},
-  components: {
+  data() {
+    return {
+      questions: {},
+      search: '',
+    };
   },
-}
+  components: {},
+  computed: {
+    questionsC() {
+      const arr = toArray(this.questions);
+      if (this.search.length > 0) {
+        return arr.slice().filter(x => x.question.toLowerCase().match(this.search.toLowerCase()));
+      }
+      return this.questions;
+    },
+  },
+};
 </script>
 
 <style scoped lang="stylus">
@@ -50,4 +61,7 @@ vue = #40B181
     > .title
       font-size 20px
       font-weight 500
+  .search
+    padding .5rem
+    margin-bottom 1rem
 </style>
