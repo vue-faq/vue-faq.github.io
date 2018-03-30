@@ -5,6 +5,8 @@
     span {{q.question}}
     br
     span {{q.answer}}
+    br
+    br
   span(v-if="!Object.keys(questions).length") Грузим вопросы...
 </template>
 
