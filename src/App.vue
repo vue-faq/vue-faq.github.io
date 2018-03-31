@@ -1,68 +1,75 @@
 <template lang="pug">
 v-app
-  v-container(fluid)
+  fv
+  v-container(fluid class="zindex")
     v-layout(v-if="!Object.keys(questions).length")
       v-alert(outline color="info" icon="info" :value="true") Грузим вопросы...
     v-layout(v-else justify-center)
       v-flex(xs12 sm6 lg5)
-        h1(class="head__title") Vue FAQ 
-        v-layout(justify-center)
-          v-flex(xs6 lg3 class="text-xs-center")
-            v-select(label="Количество ответов на странице" v-model="perPage" :items="[5, 10, 25, 50, 100]")
+        h1(class="head__title") Vue FAQ
+
         a(href="https://vuejs.org/v2/guide/" title="vue doc" class="pray") 🙏🏻 Вот по этой ссылке ваша библия и коран! молитесь на нее днем и ночью, утром и вечером, в радости и печали, в здравии и нездравии.. всегда в общем!
-          
-        v-text-field(
-          v-model="query"
-          label="Поиск тупых вопросов"
-          prepend-icon="search"
-          class="search")
+        v-layout(justify-center)
+          v-flex
+            v-select(label="Количество ответов на странице" v-model="perPage" :items="[5, 10, 25, 50, 100]" class="select-quests" hide-details)
+            v-text-field(
+                v-model="query"
+                label="Поиск тупых вопросов"
+                prepend-icon="search"
+                class="search"
+                hide-details)
+
         v-card(class="question" v-for="(q, i) in paginated" :key="i")
           span(v-html="q.question" class="cq")
           span(v-html="q.answer" class="ca")
-        
+
         v-layout
           v-flex(xs10 class="text-xs-center")
             v-pagination(v-model="page" :length="paginationLength")
 </template>
 
-<script>
-import { db } from './fb';
-import toArray from 'lodash/toArray';
+<script lang="js">
+import { db } from './fb'
+import toArray from 'lodash/toArray'
+import fv from './flyingVue.js'
 
 export default {
-  data() {
+  components: {
+    fv
+  },
+  data () {
     return {
       questions: {},
       query: '',
       page: 1,
-      perPage: 10,
-    };
+      perPage: 10
+    }
   },
-  async created() {
-    const qc = db.collection('questions');
-    const qs = await qc.get();
-    qs.forEach(q => Vue.set(this.questions, q.id, { ...q.data(), id: q.id }));
+  async created () {
+    const qc = db.collection('questions')
+    const qs = await qc.get()
+    qs.forEach(q => Vue.set(this.questions, q.id, { ...q.data(), id: q.id }))
   },
   computed: {
-    questionsArray() {
-      return toArray(this.questions);
+    questionsArray () {
+      return toArray(this.questions)
     },
-    questionsC() {
+    questionsC () {
       if (this.query.length > 0) {
-        return this.questionsArray.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()));
+        return this.questionsArray.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()))
       }
-      return this.questions;
+      return this.questions
     },
-    paginated() {
+    paginated () {
       return this.questionsArray
         .slice()
-        .splice(this.page, this.perPage);
+        .splice(this.page, this.perPage)
     },
-    paginationLength() {
-      return Math.ceil(this.questionsArray.length / this.perPage);
-    },
-  },
-};
+    paginationLength () {
+      return Math.ceil(this.questionsArray.length / this.perPage)
+    }
+  }
+}
 </script>
 
 <style scoped lang="stylus">
@@ -70,6 +77,9 @@ vue = #40B181
 
 a
   text-decoration none
+
+.zindex
+  z-index 5
 
 #app
   font-family 'open sans', 'roboto', 'helvetica'
@@ -96,8 +106,13 @@ a
   font-size 14px
   color #b0bec5
   margin-bottom .5rem
+  transition-property text-shadow,color
+  transition .2s ease
   &:hover
     color vue
     text-shadow 0 1px vue
     background-color transparent
+
+.select-quests
+  margin-top 1rem
 </style>

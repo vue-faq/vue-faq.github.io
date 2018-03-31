@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "firebase": "^4.12.1",
+    "gsap": "^1.20.4",
     "lodash": "^4.17.5",
     "vue": "2.5.16",
     "vuetify": "^1.0.11"
@@ -18,6 +19,11 @@
     "@vue/cli-plugin-babel": "^3.0.0-beta.1",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.1",
     "@vue/cli-service": "^3.0.0-beta.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
     "pug": "^2.0.0-rc.4",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
@@ -31,25 +37,14 @@
       "@vue/app"
     ]
   },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "globals": {
-      "process": false,
-      "Vue": false
-    }
-  },
   "postcss": {
     "plugins": {
       "autoprefixer": {}
     }
   },
   "browserslist": [
-    "> 1%",
+    "> 2%",
     "last 2 versions",
-    "not ie <= 8"
+    "not ie <= 11"
   ]
 }
