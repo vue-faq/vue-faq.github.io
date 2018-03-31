@@ -8,7 +8,7 @@ v-app
         h1(class="head__title") Vue FAQ 
         v-layout(justify-center)
           v-flex(xs6 lg3 class="text-xs-center")
-            v-select(label="Количество ответов на странице" v-model="perPage" :items="[5, 10, 25, 50, 100]")
+            v-select(label="Количество ответов на странице" v-model="perPage" :items="[2, 5, 10, 25, 50, 100]")
         a(href="https://vuejs.org/v2/guide/" title="vue doc" class="pray") 🙏🏻 Вот по этой ссылке ваша библия и коран! молитесь на нее днем и ночью, утром и вечером, в радости и печали, в здравии и нездравии.. всегда в общем!
           
         v-text-field(
@@ -16,7 +16,7 @@ v-app
           label="Поиск тупых вопросов"
           prepend-icon="search"
           class="search")
-        v-card(class="question" v-for="(q, i) in paginated" :key="i")
+        v-card(class="question" v-for="(q, i) in questionsC" :key="i")
           span(v-html="q.question" class="cq")
           span(v-html="clickable(q.answer)" class="ca")
         
@@ -49,22 +49,27 @@ export default {
     },
     questionsC() {
       if (this.query.length > 0) {
-        return this.questionsArray.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()));
+        return this.questionsArray
+          .slice()
+          .filter(x => x.question.toLowerCase().match(this.query.toLowerCase()));
       }
-      return this.questions;
+      return this.paginated;
     },
     paginated() {
       return this.questionsArray
         .slice()
-        .splice(this.page, this.perPage);
+        .splice(this.page * this.perPage - this.perPage, this.perPage);
     },
     paginationLength() {
+      if (this.query.length > 0) {
+        return Math.ceil(this.paginated.length / this.perPage);
+      }
       return Math.ceil(this.questionsArray.length / this.perPage);
     },
   },
   methods: {
     clickable(text) {
-      var regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?)/gi;
+      const regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?)/gi;
       return text.toString().replace(regexp, '<a href="$1" target="_blank">$1</a>');
     },
   },
