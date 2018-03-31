@@ -63,7 +63,7 @@ export default {
     },
     clickable(text) {
       var regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?)/gi;
-      return text.replace(regexp, '<a href="$1" target="_blank">$1</a>');
+      return text.toString().replace(regexp, '<a href="$1" target="_blank">$1</a>');
     },
   },
 };
