@@ -56,7 +56,7 @@ export default {
     paginated() {
       return this.questionsArray
         .slice()
-        .splice(this.page, this.perPage);
+        .splice(this.page * this.perPage - this.perPage, this.perPage);
     },
     paginationLength() {
       return Math.ceil(this.questionsArray.length / this.perPage);
