@@ -18,7 +18,7 @@ v-app
           class="search")
         v-card(class="question" v-for="(q, i) in questionsC" :key="i")
           span(v-html="q.question" class="cq")
-          span(v-html="q.answer" class="ca")
+          span(v-html="clickable(q.answer)" class="ca")
         
         v-layout
           v-flex(xs10 class="text-xs-center")
@@ -63,6 +63,12 @@ export default {
         return Math.ceil(this.paginated.length / this.perPage);
       }
       return Math.ceil(this.questionsArray.length / this.perPage);
+    },
+  },
+  methods: {
+    clickable(text) {
+      var regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?)/gi;
+      return text.toString().replace(regexp, '<a href="$1" target="_blank">$1</a>');
     },
   },
 };
