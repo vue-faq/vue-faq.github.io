@@ -11,7 +11,7 @@ v-app
         a(href="https://vuejs.org/v2/guide/" title="vue doc" class="pray") 🙏🏻 Вот по этой ссылке ваша библия и коран! молитесь на нее днем и ночью, утром и вечером, в радости и печали, в здравии и нездравии.. всегда в общем!
         v-layout(justify-center)
           v-flex
-            v-select(label="Количество ответов на странице" v-model="perPage" :items="[5, 10, 25, 50, 100]" class="select-quests" hide-details)
+            v-select(label="Количество ответов на странице" v-model="perPage" :items="[2, 5, 10, 25, 50, 100]" class="select-quests" hide-details)
             v-text-field(
                 v-model="query"
                 label="Поиск тупых вопросов"
@@ -19,18 +19,17 @@ v-app
                 class="search"
                 hide-details)
 
-        v-card(class="question" v-for="(q, i) in paginated" :key="i")
+        v-card(class="question" v-for="(q, i) in qorp" :key="q.id")
           span(v-html="q.question" class="cq")
           span(v-html="q.answer" class="ca")
 
         v-layout
           v-flex(xs10 class="text-xs-center")
-            v-pagination(v-model="page" :length="paginationLength")
+            v-pagination(v-model="page" :length="totalPages")
 </template>
 
 <script lang="js">
 import { db } from './fb'
-import toArray from 'lodash/toArray'
 import fv from './flyingVue.js'
 
 export default {
@@ -39,7 +38,7 @@ export default {
   },
   data () {
     return {
-      questions: {},
+      questions: [],
       query: '',
       page: 1,
       perPage: 10
@@ -48,25 +47,36 @@ export default {
   async created () {
     const qc = db.collection('questions')
     const qs = await qc.get()
-    qs.forEach(q => Vue.set(this.questions, q.id, { ...q.data(), id: q.id }))
+
+    qs.forEach(q => {
+      let obj = {...q.data(), id: q.id}
+      this.questions.push(obj)
+    })
+    // qs.forEach(q => Vue.set(this.questions, q.id, { ...q.data(), id: q.id }))
   },
   computed: {
-    questionsArray () {
-      return toArray(this.questions)
+    qorp () {
+      return this.query.length > 0 ? this.qSearched : this.paginated()
     },
-    questionsC () {
+    qSearched () {
       if (this.query.length > 0) {
-        return this.questionsArray.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()))
+        return this.questions.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()))
       }
       return this.questions
     },
+    totalPages () {
+      return Math.ceil(this.questions.length / this.perPage)
+    }
+  },
+  methods: {
     paginated () {
-      return this.questionsArray
-        .slice()
-        .splice(this.page, this.perPage)
-    },
-    paginationLength () {
-      return Math.ceil(this.questionsArray.length / this.perPage)
+      if (this.page >= this.totalPages) this.page = this.totalPages
+
+      const idx = this.page * this.perPage - this.perPage
+      // i really dont know how this shit works.. just 4.20 am and i made it //@rei
+      const pList = this.questions.slice(idx, this.perPage + idx)
+
+      return pList
     }
   }
 }
@@ -82,6 +92,7 @@ a
   z-index 5
 
 #app
+  min-height 100vh
   font-family 'open sans', 'roboto', 'helvetica'
 .head__title
   color vue
