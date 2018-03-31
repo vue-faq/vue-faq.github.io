@@ -1,74 +1,90 @@
 <template lang="pug">
 v-app
-  v-container(fluid)
-    v-layout(v-if="!Object.keys(questions).length")
+  fv(v-if="questions.length")
+  v-container(fluid class="zindex")
+    v-layout(v-if="!questions.length")
       v-alert(outline color="info" icon="info" :value="true") Грузим вопросы...
     v-layout(v-else justify-center)
       v-flex(xs12 sm6 lg5)
-        h1(class="head__title") Vue FAQ 
-        v-layout(justify-center)
-          v-flex(xs6 lg3 class="text-xs-center")
-            v-select(label="Количество ответов на странице" v-model="perPage" :items="[5, 10, 25, 50, 100]")
+        h1(class="head__title") Vue FAQ
+
         a(href="https://vuejs.org/v2/guide/" title="vue doc" class="pray") 🙏🏻 Вот по этой ссылке ваша библия и коран! молитесь на нее днем и ночью, утром и вечером, в радости и печали, в здравии и нездравии.. всегда в общем!
-          
-        v-text-field(
-          v-model="query"
-          label="Поиск тупых вопросов"
-          prepend-icon="search"
-          class="search")
-        v-card(class="question" v-for="(q, i) in paginated" :key="i")
+        v-layout(justify-center)
+          v-flex
+            v-select(label="Количество ответов на странице" v-model="perPage" :items="[2, 5, 10, 25, 50, 100]" class="select-quests" hide-details)
+            v-text-field(
+                v-model="query"
+                label="Поиск тупых вопросов"
+                prepend-icon="search"
+                class="search"
+                hide-details)
+
+        v-card(class="question" v-for="(q, i) in qorp" :key="q.id")
           span(v-html="q.question" class="cq")
           span(v-html="clickable(q.answer)" class="ca")
-        
+
         v-layout
           v-flex(xs10 class="text-xs-center")
-            v-pagination(v-model="page" :length="paginationLength")
+            v-pagination(v-model="page" :length="totalPages")
 </template>
 
-<script>
-import { db } from './fb';
-import toArray from 'lodash/toArray';
+<script lang="js">
+import { db } from './fb'
+import fv from './flyingVue.js'
 
 export default {
-  data() {
+  components: {
+    fv
+  },
+  data () {
     return {
-      questions: {},
+      questions: [],
       query: '',
       page: 1,
-      perPage: 10,
-    };
+      perPage: 10
+    }
   },
-  async created() {
-    const qc = db.collection('questions');
-    const qs = await qc.get();
-    qs.forEach(q => Vue.set(this.questions, q.id, { ...q.data(), id: q.id }));
+  async created () {
+    const qc = db.collection('questions')
+    const qs = await qc.get()
+
+    qs.forEach(q => {
+      let obj = {...q.data(), id: q.id}
+      this.questions.push(obj)
+    })
+    // qs.forEach(q => Vue.set(this.questions, q.id, { ...q.data(), id: q.id }))
   },
   computed: {
-    questionsArray() {
-      return toArray(this.questions);
+    qorp () {
+      return this.query.length > 0 ? this.qSearched : this.paginated()
     },
-    questionsC() {
+    qSearched () {
       if (this.query.length > 0) {
-        return this.questionsArray.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()));
+        return this.questions.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()))
       }
-      return this.questions;
+      return this.questions
     },
-    paginated() {
-      return this.questionsArray
-        .slice()
-        .splice(this.page, this.perPage);
-    },
-    paginationLength() {
-      return Math.ceil(this.questionsArray.length / this.perPage);
-    },
+    totalPages () {
+      return Math.ceil(this.questions.length / this.perPage)
+    }
   },
   methods: {
-    clickable(text) {
-      var regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?)/gi;
-      return text.toString().replace(regexp, '<a href="$1" target="_blank">$1</a>');
+    paginated () {
+      if (this.page >= this.totalPages) this.page = this.totalPages
+
+      const idx = this.page * this.perPage - this.perPage
+      // i really dont know how this shit works.. just 4.20 am and i made it //@rei
+      const pList = this.questions.slice(idx, this.perPage + idx)
+
+      return pList
     },
-  },
-};
+    clickable (text) {
+      const regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?)/gi
+      return text.toString().replace(regexp, '<a href="$1" target="_blank">$1</a>')
+    }
+  }
+}
+
 </script>
 
 <style scoped lang="stylus">
@@ -77,7 +93,11 @@ vue = #40B181
 a
   text-decoration none
 
+.zindex
+  z-index 5
+
 #app
+  min-height 100vh
   font-family 'open sans', 'roboto', 'helvetica'
 .head__title
   color vue
@@ -102,8 +122,13 @@ a
   font-size 14px
   color #b0bec5
   margin-bottom .5rem
+  transition-property text-shadow,color
+  transition .2s ease
   &:hover
     color vue
     text-shadow 0 1px vue
     background-color transparent
+
+.select-quests
+  margin-top 1rem
 </style>
