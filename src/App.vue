@@ -18,7 +18,7 @@ v-app
           class="search")
         v-card(class="question" v-for="(q, i) in paginated" :key="i")
           span(v-html="q.question" class="cq")
-          span(v-html="q.answer" class="ca")
+          span(v-html="clickable(q.answer)" class="ca")
         
         v-layout
           v-flex(xs10 class="text-xs-center")
@@ -60,6 +60,10 @@ export default {
     },
     paginationLength() {
       return Math.ceil(this.questionsArray.length / this.perPage);
+    },
+    clickable(text) {
+      var regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?)/gi;
+      return text.replace(regexp, '<a href="$1" target="_blank">$1</a>');
     },
   },
 };
