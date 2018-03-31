@@ -1,8 +1,8 @@
 <template lang="pug">
 v-app
-  fv
+  fv(v-if="questions.length")
   v-container(fluid class="zindex")
-    v-layout(v-if="!Object.keys(questions).length")
+    v-layout(v-if="!questions.length")
       v-alert(outline color="info" icon="info" :value="true") Грузим вопросы...
     v-layout(v-else justify-center)
       v-flex(xs12 sm6 lg5)

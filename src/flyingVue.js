@@ -4,7 +4,7 @@ import vuelogo from './assets/vuelogo.svg'
 import { TimelineLite } from 'gsap'
 
 const winSize = () => {
-  return { w: window.innerWidth, h: window.innerHeight }
+  return { w: window.innerWidth, h: document.body.clientHeight }
 }
 
 export default {
