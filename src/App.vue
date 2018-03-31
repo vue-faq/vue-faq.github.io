@@ -16,7 +16,7 @@ v-app
           label="Поиск тупых вопросов"
           prepend-icon="search"
           class="search")
-        v-card(class="question" v-for="(q, i) in paginated" :key="i")
+        v-card(class="question" v-for="(q, i) in questionsC" :key="i")
           span(v-html="q.question" class="cq")
           span(v-html="q.answer" class="ca")
         
@@ -51,14 +51,17 @@ export default {
       if (this.query.length > 0) {
         return this.questionsArray.slice().filter(x => x.question.toLowerCase().match(this.query.toLowerCase()));
       }
-      return this.questions;
+      return this.paginated;
     },
     paginated() {
       return this.questionsArray
         .slice()
-        .splice(this.page, this.perPage);
+        .splice(this.page * this.perPage - this.perPage, this.perPage);
     },
     paginationLength() {
+      if (this.query.length > 0){
+        return Math.ceil(this.paginated.length / this.perPage);
+      }
       return Math.ceil(this.questionsArray.length / this.perPage);
     },
   },
