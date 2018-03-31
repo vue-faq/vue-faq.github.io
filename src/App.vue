@@ -21,7 +21,7 @@ v-app
 
         v-card(class="question" v-for="(q, i) in qorp" :key="q.id")
           span(v-html="q.question" class="cq")
-          span(v-html="q.answer" class="ca")
+          span(v-html="clickable(q.answer)" class="ca")
 
         v-layout
           v-flex(xs10 class="text-xs-center")
@@ -77,9 +77,14 @@ export default {
       const pList = this.questions.slice(idx, this.perPage + idx)
 
       return pList
+    },
+    clickable (text) {
+      const regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?)/gi
+      return text.toString().replace(regexp, '<a href="$1" target="_blank">$1</a>')
     }
   }
 }
+
 </script>
 
 <style scoped lang="stylus">
