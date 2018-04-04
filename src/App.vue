@@ -1,14 +1,16 @@
 <template lang="pug">
 v-app
-  fv(v-if="questions.length")
+  fv(v-if="questions.length && α >= 10")
   v-container(fluid class="zindex")
     v-layout(v-if="!questions.length")
       v-alert(outline color="info" icon="info" :value="true") Грузим вопросы...
     v-layout(v-else justify-center)
       v-flex(xs12 sm6 lg5)
-        h1(class="head__title") Vue FAQ
+        h1(class="head__title" @click="γ()")
+          span Vue FAQ
 
-        a(href="https://vuejs.org/v2/guide/" title="vue doc" class="pray") 🙏🏻 Вот по этой ссылке ваша библия и коран! молитесь на нее днем и ночью, утром и вечером, в радости и печали, в здравии и нездравии.. всегда в общем!
+        v-layout(justify-center)
+          a(href="https://vuejs.org/v2/guide/" title="vue doc" class="pray") 🙏🏻 Official Vue.js Documentation 🙏🏻
         v-layout(justify-center)
           v-flex
             v-select(label="Количество ответов на странице" v-model="perPage" :items="[2, 5, 10, 25, 50, 100]" class="select-quests" hide-details)
@@ -41,7 +43,8 @@ export default {
       questions: [],
       query: '',
       page: 1,
-      perPage: 10
+      perPage: 10,
+      α: 0
     }
   },
   async created () {
@@ -81,6 +84,11 @@ export default {
     clickable (text) {
       const regexp = /((ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?)/gi
       return text.toString().replace(regexp, '<a href="$1" target="_blank">$1</a>')
+    },
+    γ () {
+      (this.α >= 10)
+        ? this.α = 10
+        : this.α += 1
     }
   }
 }
@@ -100,10 +108,13 @@ a
   min-height 100vh
   font-family 'open sans', 'roboto', 'helvetica'
 .head__title
-  color vue
   text-align center
-  font-size 40px
-  user-select none
+  span
+    color vue
+    font-size 44px
+    user-select none
+    &:hover
+      text-shadow 2px 2px vue
 .question
   margin 1rem 0
   transition .3s linear
@@ -120,8 +131,8 @@ a
     font-size 20px
 
 .pray
-  font-size 14px
-  color #b0bec5
+  font-size 16px
+  color #607d8b
   margin-bottom .5rem
   transition-property text-shadow,color
   transition .2s ease
